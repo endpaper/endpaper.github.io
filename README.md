@@ -1,4 +1,4 @@
-[网页版](https://endpaper.github.io )
+[网页版](https://endpaper.github.io)
 
 # Machine Learning
 

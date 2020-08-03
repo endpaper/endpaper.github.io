@@ -1,14 +1,14 @@
-[网页版](https://endpaper.github.io )
+[网页版](https://endpaper.github.io)
 
 # Machine Learning
 
-> Gradient Descent
+> ## Gradient Descent
 
 $$
 Loss(\theta)=\frac {1} {2m}\sum_ {i=0}^{m}(f_\theta(x^i)-y^i)^2
 $$
 
-1. Batch Gradient Descent(BGD)
+1. ### Batch Gradient Descent(BGD)
 
    ​	在每轮迭代时，BGD计算所有样本的残差平方和，然后计算梯度并更新参数，结束本轮迭代。也就是说BGD算法中，每完成一轮迭代（观测完所有的训练样本）只能进行一次参数更新。
 
@@ -20,7 +20,7 @@ $$
        params := params - learning_rate * params 
    ```
 
-2. Stochastic Gradient Descent(SGD)
+2. ### Stochastic Gradient Descent(SGD)
 
    ​	SGD每观测到一条数据，都会进行一次参数更新，当完成一轮迭代时，参数已经更新了m次（假设训练样本的样本容量为m，相比于BGD，SGD参数更新的速度更快。
 
@@ -41,7 +41,7 @@ $$
 
    **BGD 可能会收敛到local minimal，当然 SGD 的震荡可能会跳出local minimal。**
 
-3. Mini-batch Gradient Descent(MBGD)
+3. ### Mini-batch Gradient Descent(MBGD)
 
    ​	为了平衡训练时模型收敛的速度和收敛的稳定性，同时又能够充分利用深度学习库中高度优化的矩阵操作进行梯度计算，我们每一次采用n个样本进行计算，更新参数。
 

@@ -13,7 +13,6 @@
     </script>
 </head>
 ```
-
 # Machine Learning
 
 > ## Gradient Descent

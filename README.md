@@ -93,6 +93,53 @@ $$
 
 \mu是均值，\sigma是方差，将特征值映射到均值是0方差是1的标准高斯分布上。
 
+### 逻辑回归中的梯度推导
+
+- 假设函数:
+
+$$
+h_{\theta}(x)=\frac 1 {1+e^{-\theta^Tx}}
+$$
+
+$$
+\frac {\partial h_{\theta}(x)} {\partial\theta_j}=\frac {e^{-\theta^Tx}} {(1+e^{-\theta^Tx})^2}x_j
+$$
+
+- 损失函数：
+
+$$
+J(\theta)=-\frac 1 m \sum_{i=1}^{m}[y^{(i)}log(h_\theta(x^{(i)}))+(1-y^{(i)})log(1-h_\theta(x^{(i)}))]
+$$
+
+$$
+\frac {\partial J(\theta)} {\partial\theta_j}=-\frac 1 m \sum_{i=1}^{m}[y^{(i)}\frac {e^{-\theta^Tx^{(i)}}} {1+e^{-\theta^Tx^{(i)}}} x^{(i)}_{j} -(1-y^{(i)})\frac 1 {1+e^{-\theta^Tx{(i)}}} x^{(i)}_{j}]
+$$
+
+$$
+=-\frac 1 m \sum_{i=1}^{m}[y^{(i)}(1-h_\theta(x^{(i)}))x^{(i)}_{j}-(1-y^{(i)})h_\theta(x^{(i)})x^{(i)}_{j}]
+$$
+
+$$
+=\frac 1 m \sum_{i=1}^{m} (h_{\theta}(x^{(i)})-y^{(i)})x^{(i)}_{j}
+$$
+
+- 参数更新公式：
+
+$$
+\theta_j:=\theta_j-\frac \alpha m \sum_{i=1}^{m} (h_{\theta}(x^{(i)})-y^{(i)})x^{(i)}_{j}
+$$
+
+- 向量化表示：
+
+$$
+\theta:=\theta-\frac \alpha m X^T(g(X\theta)-\vec y)
+$$
+
+​	其中：
+$$
+g(z)=\frac 1 {1+e^{-z}}
+$$
+
 # Deep Learning
 
 # Reinforcement Learning

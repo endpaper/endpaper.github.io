@@ -175,7 +175,7 @@ Decoder：a two-layers LSTM network with a copy mechanism [引用]
 该文的主要贡献和研究是在编码器部分。作者首先将数据集处理为key-value形式的键值对记录r_(i,j)，而实体e_i={r_(i,1),r_(i,2),…,r_(i,J)}则是与该实体(人名或者团队名)相关的记录的集合，总的数据结构表示为s={e_1,e_2,…,e_I}，每条数据表示为(s,y)，其中y表示人工撰写的参考文本。
 为了获取数据的结构信息，作者引入两层Transformer分别对记录和实体进行编码，并且通过hierarchical attention机制得到编码器的上下文语境再反馈给解码器。
 
-p1_1
+![Image](https://raw.githubusercontent.com/endpaper/endpaper.github.io/master/data%20to%20text%20p1_1.png)
 
 Low-level encoder：通过transformer比较不同记录r_(i,j)从而得到各个记录的隐藏层表示h_(i,j)。
 
@@ -183,11 +183,11 @@ High-level encoder：与low-level encoder相似，通过transformer比较不同�
 
 \alpha表示实体层(high)的注意力分值，\beta表示记录层(low)的注意力分值，与传统分层注意力机制不同的是，\beta如果只关注记录(key,value)中的key效果会比关注整个记录更好，value会造成噪音影响。如下图所示，同时关注key和value会使得模型无法准确地选择最恰当的数据。
 
-p1_2
+![Image](https://raw.githubusercontent.com/endpaper/endpaper.github.io/master/data%20to%20text%20p1_2.png)
 
 - Result：
 
-p1_3
+![Image](https://raw.githubusercontent.com/endpaper/endpaper.github.io/master/data%20to%20text%20p1_3.png)
 
 Wiseman是一种标准的带拷贝机制的编码器-解码器结构的模型。
 

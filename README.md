@@ -140,6 +140,10 @@ $$
 g(z)=\frac 1 {1+e^{-z}}
 $$
 
+### 二元分类为什么不能用MSE做为损失函数？
+
+
+
 # Deep Learning
 
 # Reinforcement Learning

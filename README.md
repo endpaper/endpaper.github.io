@@ -215,4 +215,11 @@ Hierarchical-k是本文中编码器部分采用只关注key的分层Transformer�
 
 事实上，Hierarchical-k与Puduppully-updt有很大的相似之处，二者都在各自的模型中引入了分层注意力机制，通过先关注实体再关注实体对应的记录来获取数据的结构化信息，不同的是前者将该分层思想应用于编码器部分而后者则应用于解码器部分。另外，前者采用Transformer来替换后者所采用的RNN(LSTM)并且在分层注意力机制中选择性去除对value的关注。
 
+## Recommender System
 
+### Title: Fighting Boredom In Recommender Systems With Linear Reinforcement Learning
+
+- PDF:
+- PPT:
+
+### 

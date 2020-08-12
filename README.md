@@ -154,7 +154,7 @@ $$
 
 # 周懂一点[论文精读]
 ## Data-to-text
-### Title：A Hierarchical Model for Data-to-Text Generation
+### Title: A Hierarchical Model for Data-to-Text Generation
 - Author：
 
 Cl´ement Rebuﬀel, Laure Soulier, Geoﬀrey Scoutheeten, and Patrick Gallinari
@@ -219,7 +219,5 @@ Hierarchical-k是本文中编码器部分采用只关注key的分层Transformer�
 
 ### Title: Fighting Boredom In Recommender Systems With Linear Reinforcement Learning
 
-- PDF:
-- PPT:
-
-### 
+- PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/7447-fighting-boredom-in-recommender-systems-with-linear-reinforcement-learning.pdf
+- PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/7447-fighting-boredom-in-recommender-systems-with-linear-reinforcement-learning.pptx

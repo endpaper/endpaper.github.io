@@ -151,3 +151,68 @@ $$
 # Transfer Learning
 
 # Federated Learning
+
+# 周懂一点[论文精读]
+## Data-to-text
+### Title：A Hierarchical Model for Data-to-Text Generation
+- Author：
+
+Cl´ement Rebuﬀel, Laure Soulier, Geoﬀrey Scoutheeten, and Patrick Gallinari
+
+- Abstract：
+
+将结构化数据转录为自然语言描述已成为一项具有挑战性的任务，称为“数据到文本”。这些结构通常会重新组合多个元素及其属性。大多数尝试都依赖于将元素线性化为序列的翻译的编码器/解码器方法。但是，这丢失了大多数数据中包含的结构信息。在这项工作中，我们提出使用分层模型来克服此限制，该模型在元素级别和结构级别对数据结构进行编码。在RotoWire数据集上的评估显示了我们模型w.r.t.在定性和定量指标上的有效性。
+
+- Why：
+
+一方面，目前大多数的研究工作都是集中在解码器部分，对于数据仅仅是简单地线性化处理。
+另一方面，大多数在编码器部分采用RNN（包括GRU和LSTM），这就需要顺序输入数据，这种编码无序数据的方式影响了学习效果。
+
+- What：
+
+Encoder：a two-level Transformer architecture with key-guided hierarchical attention
+
+Decoder：a two-layers LSTM network with a copy mechanism [引用]
+
+- How：
+
+该文的主要贡献和研究是在编码器部分。作者首先将数据集处理为key-value形式的键值对记录r_(i,j)，而实体e_i={r_(i,1),r_(i,2),…,r_(i,J)}则是与该实体(人名或者团队名)相关的记录的集合，总的数据结构表示为s={e_1,e_2,…,e_I}，每条数据表示为(s,y)，其中y表示人工撰写的参考文本。
+为了获取数据的结构信息，作者引入两层Transformer分别对记录和实体进行编码，并且通过hierarchical attention机制得到编码器的上下文语境再反馈给解码器。
+
+![Image](https://raw.githubusercontent.com/endpaper/endpaper.github.io/master/data%20to%20text%20p1_1.png)
+
+Low-level encoder：通过transformer比较不同记录r_(i,j)从而得到各个记录的隐藏层表示h_(i,j)。
+
+High-level encoder：与low-level encoder相似，通过transformer比较不同底层实体表示h_i从而得到各个实体对应的隐藏层状态e_i。对所有实体得出的隐藏层状态e_i进行求平均值得到编码器最终的输出z，并用于解码器的初始化。
+
+\alpha表示实体层(high)的注意力分值，\beta表示记录层(low)的注意力分值，与传统分层注意力机制不同的是，\beta如果只关注记录(key,value)中的key效果会比关注整个记录更好，value会造成噪音影响。如下图所示，同时关注key和value会使得模型无法准确地选择最恰当的数据。
+
+![Image](https://raw.githubusercontent.com/endpaper/endpaper.github.io/master/data%20to%20text%20p1_2.png)
+
+- Result：
+
+![Image](https://raw.githubusercontent.com/endpaper/endpaper.github.io/master/data%20to%20text%20p1_3.png)
+
+Wiseman是一种标准的带拷贝机制的编码器-解码器结构的模型。
+
+Li是一种标准的带延迟拷贝机制的编码器-解码器结构的模型。
+
+Puduppully-plan是先生成plan再根据其生成文本的模型。
+
+Puduppully-updt是具有动态实体表示模块的编码器-解码器结构的模型（分层注意力机制）。
+
+Flat是本文中编码器部分采用Transformer替换RNN的标准的编码器-解码器结构的模型。
+
+Hierarchical-kv是本文中编码器部分采用对key和value都关注的分层Transformer的模型。
+
+Hierarchical-k是本文中编码器部分采用只关注key的分层Transformer的模型。
+
+通过比较Flat与Hierarchical-k/Hierarchical-kv模型，可以看出对结构化数据进行分层编码比直接顺序输入结构化数据的效果更好。
+通过比较Hierarchical-k与Hierarchical-kv模型，可以看出只关注key而忽略value的效果更好，关注value可能会造成噪音效果。
+通过比较Flat与Wiseman模型，可以看出Transformer应该比RNN更适合于结构化的数据。
+通过比较Hierarchical-k/Hierarchical-kv与Li、Puduppully-plan模型，可以看出在编码器部分获取结构化信息比在解码器部分预测结构化信息效果更好。
+通过比较Hierarchical-k与Puduppully-updt模型，可以看出Puduppully-updt在CO和RG-P%指标上更好而在其他指标上则相对较差，并且Hierarchical-k模型对数据的结构化信息只需要编码一次就可全程通用而Puduppully-updt则需要不断更新实体表示明显增加了计算的复杂度，Hierarchical-k模型显得更轻量且以更人性化的方式获得准确的流畅描述。
+
+事实上，Hierarchical-k与Puduppully-updt有很大的相似之处，二者都在各自的模型中引入了分层注意力机制，通过先关注实体再关注实体对应的记录来获取数据的结构化信息，不同的是前者将该分层思想应用于编码器部分而后者则应用于解码器部分。另外，前者采用Transformer来替换后者所采用的RNN(LSTM)并且在分层注意力机制中选择性去除对value的关注。
+
+

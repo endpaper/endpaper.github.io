@@ -142,6 +142,84 @@ $$
 
 ### 二元分类为什么不能用MSE做为损失函数？
 
+### ROC曲线理解
+
+- 何为ROC曲线？
+
+  接受者操作特性曲线（receiver operating characteristic curve，简称[ROC曲线](https://baike.baidu.com/item/ROC曲线)），又称为感受性曲线（sensitivity curve）。得此名的原因在于曲线上各点反映着相同的感受性，它们都是对同一信号刺激的反应，只不过是在几种不同的判定标准下所得的结果而已。接受者操作特性曲线就是以虚惊概率（伪阳率）为横轴，击中概率（真阳率）为纵轴所组成的坐标图，和被试在特定刺激条件下由于采用不同的判断标准得出的不同结果画出的曲线
+
+- 理解混淆矩阵
+
+  在评价分类模型性能的时候，可以使用多个指标，其中精确率（Precision）、召回率（Recall）和F1-Score是分类问题中经常使用的模型评价指标。如图为模型评价时使用到的混淆矩阵（Confusion Matrix）。其中每个统计量代表的含义如下：
+
+  •  TN：预测值为负（Negative），真实值也为负（Negative），预测正确
+
+  •  FN：预测值为负（Negative），真实值为正（Positive），预测错误
+
+  •  FP：预测值为正（Positive），真实值为负（Negative），预测错误
+
+  •  TP：测值为正（Positive），真实值也为正（Positive），预测正确
+
+![image-20200902222720576](C:\Users\pc\AppData\Roaming\Typora\typora-user-images\image-20200902222720576.png)
+
+​	首先，介绍精确度和召回率的计算公式（以正类为例）：
+$$
+Precision = \frac {TP} {TP + FP}
+$$
+
+$$
+Recall = \frac {TP} {TP + FN}
+$$
+
+​	然后，引入两个概念，True Positive Rate（真阳率）和False Positive Rate（伪阳率）：
+$$
+TPRate = \frac {TP} {TP + FN}=\frac {TP} P
+$$
+
+$$
+FPRate = \frac {FP} {FP+TN}=\frac {FP} {N}
+$$
+
+​	**TPRate的意义是所有真实类别为1的样本中，预测类别为1的比例。**
+
+​	**FPRate的意义是所有真实类别为0的样本中，预测类别为1的比例。**
+
+- ROC曲线的绘制
+
+  该曲线的横坐标是伪阳率，即FPRate，纵坐标为真阳率，即TPRate。
+
+  当绘制完成曲线后，就会对模型有一个定性的分析，如果要对模型进行量化的分析，此时需要引入一个新的概念，就是AUC（Area under roc Curve）面积，就是指ROC曲线下的面积大小，而计算AUC值只需要沿着ROC横轴做积分就可以了。真实场景中ROC曲线一般都会在![y=x](https://math.jianshu.com/math?formula=y%3Dx)这条直线的上方，所以AUC的取值一般在0.5~1之间。AUC的值越大，说明该模型的性能越好。
+
+  ![img](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599068113839&di=8310211a27812cdd69ea7bdde2651990&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170326%2Fb5b1832aec144072b4056e54d71b1a62_th.png)
+
+- Why AUC?
+
+  ROC曲线的应用场景有很多，根据上述的定义，其最直观的应用就是能反映模型在选取不同阈值的时候其敏感性（sensitivity, FPR）和其精确性（specificity, TPR）的趋势走向。不过，相比于其他的P-R曲线（精确度和召回率），ROC曲线有一个巨大的优势就是，当正负样本的分布发生变化时，其形状能够基本保持不变，而P-R曲线的形状一般会发生剧烈的变化，因此该评估指标能降低不同测试集带来的干扰，更加客观的衡量模型本身的性能。假设负类样本数量扩大十倍，那么FP和TN的数量也会随之增大，这将影响到正类的精确度，假设正类样本数量扩大十倍，那么TP和FN的数量也会随之增大，这将影响到负类的召回率。但ROC曲线的横纵坐标俩个值，FPRate只考虑第二行，N若增大10倍，则FP、TN也会成比例增加，并不影响其值，TPR更是只考虑第一行，不会受到影响。
+
+- ROC曲线绘制原理
+
+  如图为一二分类模型的真实输出结果，Score为其预测为正类的概率，假设我们把阈值设置为0.9，那么只有一个正类样本被正确分类，因此真阳率为0.1，因为没有负类样本误分为正类，所以伪阳率为0，于是坐标（0,0.9）落在ROC曲线上。依次选择不同的阈值（或称为“截断点”），画出全部的关键点以后，再连接关键点即可最终得到ROC曲线如下图所示。
+
+  <img src="https://upload-images.jianshu.io/upload_images/11525720-cb0c836e33757b87.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp" alt="img" style="zoom:50%;" />
+
+  [Photo Credit]: https://upload-images.jianshu.io/upload_images/11525720-cb0c836e33757b87.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp	"二分类模型的真实输出结果"
+
+  ![img](https://upload-images.jianshu.io/upload_images/11525720-dd2545eaaaa7c2ba.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+
+[Photo Credit]: https://upload-images.jianshu.io/upload_images/11525720-dd2545eaaaa7c2ba.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp	"ROC曲线示意图"
+
+- AUC面积的意义
+
+  如果两条ROC曲线没有相交，我们可以根据哪条曲线最靠近左上角哪条曲线代表的学习器性能就最好。但是，实际任务中，情况很复杂，如果两条ROC曲线发生了交叉，则很难一般性地断言谁优谁劣。在很多实际应用中，我们往往希望把学习器性能分出个高低来。在此引入AUC面积。
+
+  在进行学习器的比较时，若一个学习器的ROC曲线被另一个学习器的曲线完全“包住”，则可断言后者的性能优于前者；若两个学习器的ROC曲线发生交叉，则难以一般性的断言两者孰优孰劣。此时如果一定要进行比较，则比较合理的判断依据是比较**ROC曲线下的面积**，即**AUC**(Area Under ROC Curve)。
+
+- 参考：
+
+​	https://www.jianshu.com/p/2ca96fce7e81
+
+​	https://baike.baidu.com/item/AUC/19282953?fr=aladdin
+
 
 
 # Deep Learning

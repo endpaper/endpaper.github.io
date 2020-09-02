@@ -160,7 +160,7 @@ $$
 
   •  TP：测值为正（Positive），真实值也为正（Positive），预测正确
 
-![image-20200902222720576](C:\Users\pc\AppData\Roaming\Typora\typora-user-images\image-20200902222720576.png)
+![https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png)
 
 ​	首先，介绍精确度和召回率的计算公式（以正类为例）：
 $$

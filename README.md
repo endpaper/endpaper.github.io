@@ -159,8 +159,8 @@ $$
   •  FP：预测值为正（Positive），真实值为负（Negative），预测错误
 
   •  TP：测值为正（Positive），真实值也为正（Positive），预测正确
-
-![https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png)
+  
+  ![https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png)
 
 ​	首先，介绍精确度和召回率的计算公式（以正类为例）：
 $$
@@ -190,7 +190,7 @@ $$
 
   当绘制完成曲线后，就会对模型有一个定性的分析，如果要对模型进行量化的分析，此时需要引入一个新的概念，就是AUC（Area under roc Curve）面积，就是指ROC曲线下的面积大小，而计算AUC值只需要沿着ROC横轴做积分就可以了。真实场景中ROC曲线一般都会在![y=x](https://math.jianshu.com/math?formula=y%3Dx)这条直线的上方，所以AUC的取值一般在0.5~1之间。AUC的值越大，说明该模型的性能越好。
 
-  ![img](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599068113839&di=8310211a27812cdd69ea7bdde2651990&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170326%2Fb5b1832aec144072b4056e54d71b1a62_th.png)
+  ![æ··æ·ç©éµ.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png?raw=true)
 
 - Why AUC?
 

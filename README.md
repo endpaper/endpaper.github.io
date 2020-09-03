@@ -142,15 +142,29 @@ $$
 
 ### 二元分类为什么不能用MSE做为损失函数？
 
-### ROC曲线理解
+### ROC与AUC（2020/9/3）
 
-- 何为ROC曲线？
+- 模型会为每个测试样本产生一个实值或概率预测，我们根据这个实值或概率预测将所有测试样本进行排序，“最可能”是正例的测试样本排在最前面，“最不可能”是正例的测试样本排在最后面。然后，在这个排序中选择一个截断点（cut point）或者阈值（threshold），将其分成两部分，前一部分被预测为正例，后一部分被预测为负例。一个好的模型能够将正例和负例区分开，也就是说，从测试样本中随机取一正例样本和一负例样本，一个好的模型能够保证正例样本所对应的实值或概率预测大于负例样本所对应的实值或概率预测。
 
-  接受者操作特性曲线（receiver operating characteristic curve，简称[ROC曲线](https://baike.baidu.com/item/ROC曲线)），又称为感受性曲线（sensitivity curve）。得此名的原因在于曲线上各点反映着相同的感受性，它们都是对同一信号刺激的反应，只不过是在几种不同的判定标准下所得的结果而已。接受者操作特性曲线就是以虚惊概率（伪阳率）为横轴，击中概率（真阳率）为纵轴所组成的坐标图，和被试在特定刺激条件下由于采用不同的判断标准得出的不同结果画出的曲线
+- 例如，如图为一二分类模型的真实输出结果（已经根据输出的概率值对所有的测试样本进行排序）。
+
+  ![image-20200903175017370.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903175017370.png?raw=true)
+
+  ![image-20200903180211836.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903180211836.png?raw=true)
+
+  从测试样本中随机选择一个正例和一个负例，正例对应的概率值大于负例对应的概率值这个事件的概率为：
+
+  ​		
+  $$
+  \frac 3 4*1+\frac 1 4*\frac 2 3=\frac {11} {12}
+  $$
+  ​																 
+
+  ![image-20200903180730454.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903180730454.png?raw=true)
 
 - 理解混淆矩阵
 
-  在评价分类模型性能的时候，可以使用多个指标，其中精确率（Precision）、召回率（Recall）和F1-Score是分类问题中经常使用的模型评价指标。如图为模型评价时使用到的混淆矩阵（Confusion Matrix）。其中每个统计量代表的含义如下：
+  在评价分类模型性能的时候，可以使用多个指标，其中查准率（Precision）、查全率（Recall）和F1-Score是分类问题中经常使用的模型评价指标。如图为模型评价时使用到的混淆矩阵（Confusion Matrix）。其中每个统计量代表的含义如下：
 
   •  TN：预测值为负（Negative），真实值也为负（Negative），预测正确
 
@@ -158,11 +172,11 @@ $$
 
   •  FP：预测值为正（Positive），真实值为负（Negative），预测错误
 
-  •  TP：测值为正（Positive），真实值也为正（Positive），预测正确
-  
-  ![https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png)
+  •  TP：预测值为正（Positive），真实值也为正（Positive），预测正确
 
-​	首先，介绍精确度和召回率的计算公式（以正类为例）：
+![image-20200903181420646.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903181420646.png?raw=true)
+
+​	首先，介绍查准率和查全率的计算公式：
 $$
 Precision = \frac {TP} {TP + FP}
 $$
@@ -184,29 +198,48 @@ $$
 
 ​	**FPRate的意义是所有真实类别为0的样本中，预测类别为1的比例。**
 
+- Why AUC?
+
+  ROC曲线的应用场景有很多，根据上述的定义，其最直观的应用就是能反映模型在选取不同阈值的时候其敏感性（sensitivity, FPR）和其精确性（specificity, TPR）的趋势走向。不过，相比于其他的P-R曲线（精确度和召回率），ROC曲线有一个巨大的优势就是，当正负样本的分布发生变化时，其形状能够基本保持不变，而P-R曲线的形状一般会发生剧烈的变化，因此该评估指标能降低不同测试集带来的干扰，更加客观的衡量模型本身的性能。假设负类样本数量扩大十倍，那么FP和TN的数量也会随之增大，这将影响到精确度。但ROC曲线的横纵坐标俩个值，FPRate只考虑第二行（FP和TN），N若增大10倍，则FP、TN也会成比例增加，并不影响其FPRate值，TPRate更是只考虑第一行（TP和FN），不会受到影响。
+
 - ROC曲线的绘制
 
   该曲线的横坐标是伪阳率，即FPRate，纵坐标为真阳率，即TPRate。
 
   当绘制完成曲线后，就会对模型有一个定性的分析，如果要对模型进行量化的分析，此时需要引入一个新的概念，就是AUC（Area under roc Curve）面积，就是指ROC曲线下的面积大小，而计算AUC值只需要沿着ROC横轴做积分就可以了。真实场景中ROC曲线一般都会在![y=x](https://math.jianshu.com/math?formula=y%3Dx)这条直线的上方，所以AUC的取值一般在0.5~1之间。AUC的值越大，说明该模型的性能越好。
 
-  ![æ··æ·ç©éµ.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5.png?raw=true)
+  ![img](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599068113839&di=8310211a27812cdd69ea7bdde2651990&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170326%2Fb5b1832aec144072b4056e54d71b1a62_th.png)
 
-- Why AUC?
+  ​                                                                   [Photo Credit](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599068113839&di=8310211a27812cdd69ea7bdde2651990&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170326%2Fb5b1832aec144072b4056e54d71b1a62_th.png)
 
-  ROC曲线的应用场景有很多，根据上述的定义，其最直观的应用就是能反映模型在选取不同阈值的时候其敏感性（sensitivity, FPR）和其精确性（specificity, TPR）的趋势走向。不过，相比于其他的P-R曲线（精确度和召回率），ROC曲线有一个巨大的优势就是，当正负样本的分布发生变化时，其形状能够基本保持不变，而P-R曲线的形状一般会发生剧烈的变化，因此该评估指标能降低不同测试集带来的干扰，更加客观的衡量模型本身的性能。假设负类样本数量扩大十倍，那么FP和TN的数量也会随之增大，这将影响到正类的精确度，假设正类样本数量扩大十倍，那么TP和FN的数量也会随之增大，这将影响到负类的召回率。但ROC曲线的横纵坐标俩个值，FPRate只考虑第二行，N若增大10倍，则FP、TN也会成比例增加，并不影响其值，TPR更是只考虑第一行，不会受到影响。
+- ROC曲线绘制实例
 
-- ROC曲线绘制原理
+  采用上文提到的例子，正例样本数P为4，负例样本数N为3。
 
-  如图为一二分类模型的真实输出结果，Score为其预测为正类的概率，假设我们把阈值设置为0.9，那么只有一个正类样本被正确分类，因此真阳率为0.1，因为没有负类样本误分为正类，所以伪阳率为0，于是坐标（0,0.9）落在ROC曲线上。依次选择不同的阈值（或称为“截断点”），画出全部的关键点以后，再连接关键点即可最终得到ROC曲线如下图所示。
+  ![image-20200903175017370.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903175017370.png?raw=true)
 
-  <img src="https://upload-images.jianshu.io/upload_images/11525720-cb0c836e33757b87.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp" alt="img" style="zoom:50%;" />
+  我们首先将坐标轴X轴[0, 1]区间均分为3（N=3）份，Y轴[0, 1]区间均分为4（P=4）份。
 
-  [Photo Credit]: https://upload-images.jianshu.io/upload_images/11525720-cb0c836e33757b87.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp	"二分类模型的真实输出结果"
+  ![image-20200903182310806.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903182310806.png?raw=true)
 
-  ![img](https://upload-images.jianshu.io/upload_images/11525720-dd2545eaaaa7c2ba.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+  1. 当我们设定的阈值很大（例如1.00）时，所有的样本均被识别为负例，那么真阳率TPRate和FPRate均为0，对应于ROC曲线上的(0, 0)一点。
+  2. 当我们适当地降低阈值（例如0.85），那么第一例测试样本会被判为正例，因为第一例测试样本本来就是正例，所以TPRate的值将增大，增大1/P=0.25，对应的(0, 0.25)将落在ROC曲线上。
+  3. 当我们继续降低阈值（例如0.75），那么第二例测试样本会被判为正例，因为第二例测试样本本来就是正例，所以TPRate的值将继续增大，增大1/P=0.25，对应的(0, 0.50)将落在ROC曲线上。
+  4. 继续降低阈值（例如0.65），那么第三例测试样本会被判为正例，因为第三例测试样本本来就是正例，所以TPRate的值将继续增大，增大1/P=0.25，对应的(0, 0.75)将落在ROC曲线上。
+  5. 继续降低阈值（例如0.55），那么第四例测试样本会被判为正例，因为第四例测试样本本来是负例，所以FPRate的值将增大，增大1/N=1/3，对应的(1/3, 0.75)将落在ROC曲线上。
+  6. 继续降低阈值（例如0.45），那么第五例测试样本会被判为正例，因为第五例测试样本本来就是正例，所以TPRate的值将增大，增大1/P=0.25，对应的(1/3, 1.00)将落在ROC曲线上。
+  7. 继续降低阈值（例如0.35），那么第六例测试样本会被判为正例，因为第六例测试样本本来是负例，所以FPRate的值将增大，增大1/N=1/3，对应的(2/3, 1.00)将落在ROC曲线上。
+  8. 继续降低阈值（例如0），那么第七例测试样本会被判为正例，因为第七例测试样本本来是负例，所以FPRate的值将增大，增大1/N=1/3，对应的(1.00, 1.00)将落在ROC曲线上。
 
-[Photo Credit]: https://upload-images.jianshu.io/upload_images/11525720-dd2545eaaaa7c2ba.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp	"ROC曲线示意图"
+  根据上述步骤绘出的ROC曲线如图所示:
+
+  ![image-20200903185600784.png](https://github.com/endpaper/endpaper.github.io/blob/master/images/image-20200903185600784.png?raw=true)
+
+  AUC面积和等于：
+  $$
+  \frac 3 4*1+\frac 1 4*\frac 2 3=\frac {11} {12}
+  $$
+  等于【从测试样本中随机选择一个正例和一个负例，正例对应的概率值大于负例对应的概率值这个事件的概率】。
 
 - AUC面积的意义
 
@@ -214,13 +247,19 @@ $$
 
   在进行学习器的比较时，若一个学习器的ROC曲线被另一个学习器的曲线完全“包住”，则可断言后者的性能优于前者；若两个学习器的ROC曲线发生交叉，则难以一般性的断言两者孰优孰劣。此时如果一定要进行比较，则比较合理的判断依据是比较**ROC曲线下的面积**，即**AUC**(Area Under ROC Curve)。
 
-- 参考：
+- 对于AUC物理意义的理解
 
-​	https://www.jianshu.com/p/2ca96fce7e81
+  AUC是 ROC 曲线的面积，其物理意义是从所有正样本中随机挑选一个样本，模型将其预测为正样本的概率是 p1；从所有负样本中随机挑选一个样本，模型将其预测为正样本的概率是 p0。p1>p0的概率就是AUC的值。AUC考虑的是样本预测的排序质量，样本排序越混乱（正例和负例交错在一起，无法区分开），对应的AUC的值越低，模型的泛化性能越低；样本排序越整齐（正例和负例能够明显区分开），对应的AUC的值越高，模型的泛化性能越高。
 
-​	https://baike.baidu.com/item/AUC/19282953?fr=aladdin
+- AUC曲线有以下几个特点：
 
+  1. 如果完全随机地对样本进行分类，那么p1 > p0的概率为0.5，则AUC=0.5。
 
+  2. AUC在样本不平衡条件下仍然适用。
+
+     例如在反欺诈场景中，假设正常用户为正类（约占99.99%），欺诈用户为负类（约占0.01%），如果使用准确率评估模型性能，那么模型只需要将所有用户都判为正常用户就可以获得99.99%的准确率，但是这显然不能满足我们的需求，无法检测出欺诈用户。这种情况下，如果使用AUC进行评估，因为所有的用户都被判为正类，所以FPRate和TPRate均为1，此时AUC的面积为0.5，从AUC指标可以看出这不是一个好的模型，其接近于随机分类。
+
+  3. AUC反应的是模型对于样本的排序能力（根据样本预测为正类的概率来排序）。例如，AUC=0.7，那么从正类样本中随机选择一个样本A，从负类样本中随机选择一个样本B，那么A被预测为正类的概率p1有百分之七十的把握比B被预测为正类的概率p0大。
 
 # Deep Learning
 

@@ -342,7 +342,7 @@ PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/7447-fighting
 
 ### Title: Factorization Machines
 
-PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/Factorization%20Machines.pdf
+PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/Factorization-Machines.pdf
 
-PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/Factorization%20Machines.pptx
+PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/Factorization-Machines.pptx
 

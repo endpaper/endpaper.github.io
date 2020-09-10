@@ -340,8 +340,9 @@ PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/7447-fighting
 
 PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/7447-fighting-boredom-in-recommender-systems-with-linear-reinforcement-learning.pptx
 
-### Factorization Machines
+### Title: Factorization Machines
 
-PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/Factorization Machines.pdf
+PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/Factorization%20Machines.pdf
 
-PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/Factorization Machines.pptx
+PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/Factorization%20Machines.pptx
+

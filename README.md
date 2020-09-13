@@ -261,6 +261,227 @@ $$
 
   3. AUC反应的是模型对于样本的排序能力（根据样本预测为正类的概率来排序）。例如，AUC=0.7，那么从正类样本中随机选择一个样本A，从负类样本中随机选择一个样本B，那么A被预测为正类的概率p1有百分之七十的把握比B被预测为正类的概率p0大。
 
+### 矩阵求导（2020/9/13）
+
+- 一元微积分中导数与微分的关系
+  $$
+  y = f(x)
+  $$
+
+  $$
+  df = f'(x)dx
+  $$
+
+- 多元微积分中梯度与微分的关系
+  $$
+  y = f(x_1, x_2, \ldots, x_n)
+  $$
+
+  $$
+  df = \sum_{i=1}^{n}\frac{\part{f}}{\part{x_i}}dx_i=\frac{\part{f}^T}{\part{x}}dx \tag 0
+  $$
+
+  第一个等式，全微分公式；第二个等式，全微分等于梯度向量与微分向量的内积
+
+- 假如说将所有的参数排列成一个矩阵，例如
+  $$
+  X = 
+  \left[\begin{matrix}
+  x_{11} & x_{12} & x_{13} \\
+  x_{21} & x_{22} & x_{23}
+  \end{matrix}\right]
+  $$
+
+  $$
+  df = \frac{\part{f}}{\part{x_{11}}}dx_{11}+\frac{\part{f}}{\part{x_{12}}}dx_{12}+\frac{\part{f}}{\part{x_{13}}}dx_{13}+\frac{\part{f}}{\part{x_{21}}}dx_{21}+\frac{\part{f}}{\part{x_{22}}}dx_{22}+\frac{\part{f}}{\part{x_{23}}}dx_{23}
+  $$
+
+  把函数f对所有参数的偏导数，按照参数矩阵X的形状，对应元素对应放置，相应地可以组成一个“偏导数矩阵”
+  $$
+  \frac{\part{f}}{\part{X}} = 
+  \left[\begin{matrix}
+  \frac{\part{f}}{\part{x_{11}}} & \frac{\part{f}}{\part{x_{12}}} & \frac{\part{f}}{\part{x_{13}}} \\
+  \frac{\part{f}}{\part{x_{21}}} & \frac{\part{f}}{\part{x_{22}}} & \frac{\part{f}}{\part{x_{23}}}
+  \end{matrix}\right]
+  $$
+
+  $$
+  \frac{\part{f}^T}{\part{X}}·dX = 
+  \left[\begin{matrix}
+  \frac{\part{f}}{\part{x_{11}}} & \frac{\part{f}}{\part{x_{21}}} \\
+  \frac{\part{f}}{\part{x_{12}}} & \frac{\part{f}}{\part{x_{22}}} \\
+  \frac{\part{f}}{\part{x_{13}}} & \frac{\part{f}}{\part{x_{23}}}
+  \end{matrix}\right]
+  .
+  \left[\begin{matrix} 
+  dx_{11} & dx_{12} & dx_{13} \\
+  dx_{21} & dx_{22} & dx_{23}
+  \end{matrix}\right]
+  $$
+
+  $$
+  =\left[
+  \begin{matrix}
+  \frac{\part{f}}{\part{x_{11}}}dx_{11}+\frac{\part{f}}{\part{x_{21}}}dx_{21} & * & * \\
+  * & \frac{\part{f}}{\part{x_{12}}}dx_{12}+\frac{\part{f}}{\part{x_{22}}}dx_{22} & * \\
+  * & * & \frac{\part{f}}{\part{x_{13}}}dx_{13}+\frac{\part{f}}{\part{x_{23}}}dx_{23}
+  \end{matrix}
+  \right]
+  $$
+
+- 所以函数f的全微分可以表示成(tr表示矩阵的迹，tr(A)表示矩阵A主对角元素上所有元素的和)：
+  $$
+  df = tr(\frac{\part{f}^T}{\part{X}}·dX)
+  $$
+
+- 矩阵微分的运算法则
+
+  - 加减法：$d(X \pm Y) = d(X) \pm d(Y)$
+  - 乘法：    $d(XY) = d(X)Y + Xd(Y)$
+  - 转置：    $d(X^T) = d(X)^T$
+  - 迹：        $d(tr(X)) = tr(d(X))$
+  - 逆：
+
+  $$
+  XX^{-1}=I\\
+  d(XX^{-1}) =d(X)X^{-1}+Xd(X^{-1})\\
+  = d(I)\\
+  = 0
+  $$
+
+  $$
+  d(X^{-1}) = -X^{-1}dXX^{-1}
+  $$
+
+  ​	
+
+  - 逐元素乘法：$d(X\bigodot Y) = dX\bigodot Y+ X\bigodot dY$
+  - 逐元素函数：$d(\sigma(X)) = \sigma'(X) \bigodot dX $
+
+  我们希望通过求出函数f的微分后，通过公式$df = tr(\frac{\part{f}^T}{\part{X}}·dX)$计算矩阵导数
+
+- 迹技巧
+
+  - 标量套上迹:       $a = tr(a)$
+
+  - 转置:                  $tr(A^T) = tr(A)$
+
+  - 线性:                  $tr(A \pm B) = tr(A) \pm tr(B)$
+
+  - 矩阵乘法交换:   $tr(AB) = tr(BA)$，前提A与B^T形状相同
+
+    关于第4点证明：
+    $$
+    tr(AB) 
+    = \sum_{i=1}^{n}(AB)_{ii} \\
+    = \sum_{i=1}^{n}\sum_{j=1}^{n}a_{ij}b_{ji} \\
+    = \sum_{j=1}^{n}\sum_{i=1}^{n}b_{ji}a_{ij} \\
+    = tr(BA)
+    $$
+    
+
+  - 矩阵乘法，逐元素乘法交换
+    $$
+    tr(A^T(B\bigodot C))=\sum_{i,j}^{n}A_{ij}B_{ij}C_{ij}=tr((A\bigodot B)^TC)
+    $$
+    
+
+    
+
+- 复合函数
+
+  y = f(Y)， Y = g(X)
+
+  假设我们已知$\frac {\part{f}} {\part{Y}} $，如何求$\frac {\part f} {\part X}$
+
+  我们先用Y来表示f的全微分，然后再用$X$来表示微分$dY$
+  $$
+  df = tr(\frac{\part{f}^T}{\part{Y}}·dY)
+  $$
+  例如，当Y = AXB时(A和B是常量)
+  $$
+  df 
+  = tr(\frac{\part{f}^T}{\part{Y}}·dY)\\
+  = tr(\frac{\part{f}^T}{\part{Y}}·AdXB)\\
+  = tr(B\frac{\part{f}^T}{\part{Y}}·AdX) \\
+  = tr((A^T\frac{\part{f}^T}{\part{Y}}B^T)^TdX)
+  $$
+  得到
+  $$
+  \frac {\part f} {\part X} = A^T\frac{\part{f}^T}{\part{Y}}B^T
+  $$
+
+- 例子
+
+  1. $f = a^TXb$，另外shape(a) = m×1，shape(X) = m×n，shape(b) = n×1，a和b均为常量，求$\frac {\part f} {\part X}$?
+     
+     解：
+  $$
+     df = d(a^TXb)\\
+     = d(a^T)Xb + a^TdXb + a^TXd(b)\\
+     = a^TdXb
+     $$
+     因为$df$是标量，所以$df=tr(df)$
+     $$
+     df = tr(df) = tr(a^TdXb)\\
+     =tr(ba^TdX)\\
+     =tr((ab^T)^TdX)
+     $$
+     对照$df = tr(\frac{\part{f}^T}{\part{X}}·dX)$得到$\frac {\part f} {\part X} = ab^T$
+     
+  2. 线性回归$L = ||X\omega-y||^2\\$，求$\omega$的最小二乘估计，其中$y$是m×1维向量，$X$是m×n维，$\omega$是n×1维，L是标量
+     $$
+     L 
+     = ||X\omega-y||^2\\
+     = (X\omega-y)^T(X\omega-y) \tag 1
+  $$
+     
+     $$
+     dL 
+     = d(X\omega-y)^T(X\omega-y)+(X\omega-y)^Td(X\omega-y) \\ \tag 2
+     = d(X\omega)^T(X\omega-y)+(X\omega-y)^TXd\omega \\
+     = (d(Xw))^T(X\omega-y)+(X\omega-y)^TXd\omega \\
+     = (Xd\omega)^T(X\omega-y)+(X\omega-y)^TXd\omega \\
+     = 2(X\omega-y)^TXd\omega
+     $$
+     
+     因为$\omega$是向量（不是矩阵），根据本节中的公式0可得：
+     $$
+     \frac {\part L} {\part w}^T = 2(X\omega-y)^TX
+     \Rightarrow
+     \frac {\part L} {\part w} = 2X^T(X\omega-y)
+     $$
+     令$\frac {\part L} {\part w}$=0得：
+     $$
+     2X^T(X\omega-y)=0 \\ 
+     \Downarrow \\
+     X^TX\omega-X^Ty = 0 \\
+     \Downarrow \\
+     \omega = (X^TX)^{-1}·(X^Ty)
+     $$
+
+  3. $f = a^Te^{Xb}$，shape(a)=m×1，shape(X)=m×n，shape(b)=n×1，$f$是标量，求$\frac {\part f} {\part X}$
+     $$
+     df 
+     = d(a^Te^{Xb}) \\
+     = a^Td(e^{Xb}) \\
+     = a^T((e^{Xb})\bigodot (dXb)) \\
+     = tr(a^T((e^{Xb})\bigodot (dXb))) \\
+     = tr((a \bigodot e^{Xb})^Td(Xb)) \\
+     = tr((a \bigodot e^{Xb})^TdXb) \\
+     = tr(b(a \bigodot e^{Xb})^TdX) \\
+     = tr(((a \bigodot e^{Xb}) b^T)^TdX) \\
+     $$
+     $\therefore \frac {\part f} {\part X}=(a \bigodot e^{Xb}) b^T$
+
+- 参考：
+
+  - https://zhuanlan.zhihu.com/p/24709748
+
+- 分享：
+  - https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf
+  - http://cs231n.stanford.edu/vecDerivs.pdf
+
 # Deep Learning
 
 # Reinforcement Learning

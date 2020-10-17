@@ -566,4 +566,8 @@ PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/7447-fighting
 PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/Factorization-Machines.pdf
 
 PPT:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/Factorization-Machines.pdf
+### Title: Field-aware Factorization Machines for CTR Prediction
+PDF:https://github.com/endpaper/endpaper.github.io/blob/master/PDF/ffm.pdf
+ppt:https://github.com/endpaper/endpaper.github.io/blob/master/PPT/ffm.pdf
+
 
